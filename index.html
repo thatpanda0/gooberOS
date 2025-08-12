@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="app.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>macOS or something idk</title>
+</head>
+<body>
+  <div id="date-display"></div>
+
+  <div class="window iframe-window">
+    <div class="resize-handle"></div>
+    <div class="titlebar">
+      <div class="buttons">
+        <div class="button close"></div>
+        <div class="button minimize"></div>
+        <div class="button maximize"></div>
+      </div>
+      <div class="title">Test</div>
+    </div>
+    <div class="content" id="content">
+      <iframe id="office-frame" src="https://github1s.com/" frameborder="0"></iframe>
+    </div>
+  </div>
+
+  <div class="window">
+    <div class="resize-handle"></div>
+    <div class="titlebar">
+      <div class="buttons">
+        <div class="button close"></div>
+        <div class="button minimize"></div>
+        <div class="button maximize"></div>
+      </div>
+      <div class="title"> </div>
+    </div>
+    <div class="content" id="content">
+      <div class="calendar" id="calendar"></div>
+    </div>
+  </div>
+
+  <div class="window settings-window">
+    <div class="resize-handle"></div>
+
+    <div class="settings-container">
+      <div class="left-panel">
+        <div class="window-buttons">
+          <div class="button close"></div>
+          <div class="button minimize"></div>
+          <div class="button maximize"></div>
+        </div>
+
+        <nav class="settings-nav">
+          <button class="nav-item active">General</button>
+          <button class="nav-item">Network</button>
+          <button class="nav-item">Display</button>
+          <button class="nav-item">About</button>
+        </nav>
+      </div>
+
+      <div class="right-panel">
+        <div class="titlebar">
+          <div class="title">General</div>
+        </div>
+        <div class="settings-content" id="settings">
+          <!-- will add when I cook up later -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div id="dock">
+    <button class="dock-item" data-window="0">
+      <img src="Assets/Github1s.png" alt="Github1s">
+    </button>
+    <button class="dock-item" data-window="1">
+      <img src="Assets/Calendar.png" alt="Calendar">
+    </button>
+    <button class="dock-item" data-window="2">
+      <img src="Assets/Settings.png" alt="System Preferences">
+    </button>
+  </div>
+
+
+  <script src="app.js"></script>
+</body>
+</html>
