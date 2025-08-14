@@ -20,7 +20,7 @@
       <div class="title">Test</div>
     </div>
     <div class="content" id="content">
-      <iframe id="office-frame" src="https://github1s.com/" frameborder="0"></iframe>
+      <iframe id="office-frame" src="https://github1s.com/thatpanda0/gooberOS" frameborder="0"></iframe>
     </div>
   </div>
 
@@ -63,7 +63,42 @@
           <div class="title">General</div>
         </div>
         <div class="settings-content" id="settings">
-          <!-- will add when I cook up later -->
+          <label class="theme-toggle">
+            <input type="checkbox" id="darkModeToggle">
+            <span class="slider"></span>
+            Dark Mode (BETA)
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="window notes-window">
+    <div class="resize-handle"></div>
+
+    <div class="notes-container">
+      <div class="left-panel">
+        <div class="window-buttons">
+          <div class="button close"></div>
+          <div class="button minimize"></div>
+          <div class="button maximize"></div>
+        </div>
+
+        <div class="notes-header">
+          <button id="new-note-btn">+ New Note</button>
+        </div>
+
+        <nav class="notes-list" id="notes-list">
+          <!-- rah (iykyk) -->
+        </nav>
+      </div>
+
+      <div class="right-panel">
+        <div class="titlebar">
+          <div class="title" id="note-title">Untitled</div>
+        </div>
+        <div class="notes-editor">
+          <textarea id="notes-textarea" placeholder="Start typing..."></textarea>
         </div>
       </div>
     </div>
@@ -79,6 +114,9 @@
     </button>
     <button class="dock-item" data-window="2">
       <img src="Assets/Settings.png" alt="System Preferences">
+    </button>
+    <button class="dock-item" data-window="3">
+      <img src="Assets/Notes2.png" alt="Notes">
     </button>
   </div>
 
