@@ -12,9 +12,9 @@ function updateDockVisibility() {
 }
 
 windows.forEach((win) => {
-  const draggableArea = win.classList.contains("settings-window")
-    ? win.querySelector(".left-panel, .right-panel .titlebar")
-    : win.querySelector(".titlebar");
+  const draggableAreas = (win.classList.contains("settings-window") || win.classList.contains("notes-window"))
+    ? win.querySelectorAll(".left-panel, .right-panel .titlebar")
+    : [win.querySelector(".titlebar")];
 
   const handle = win.querySelector(".resize-handle");
   const closeBtn = win.querySelector(".close");
@@ -50,7 +50,7 @@ windows.forEach((win) => {
     };
   }
 
-  draggableArea.addEventListener("pointerdown", beginPointer("drag"));
+  draggableAreas.forEach(area => area.addEventListener("pointerdown", beginPointer("drag")));
   handle.addEventListener("pointerdown", beginPointer("resize"));
 
   document.addEventListener("pointermove", (e) => {
@@ -226,3 +226,133 @@ function startSyncedClock() {
 }
 
 startSyncedClock();
+
+
+// Dark mode toggle
+const darkModeToggle = document.getElementById("darkModeToggle");
+
+// Load saved preference
+if (localStorage.getItem("theme") === "dark") {
+  document.body.classList.add("dark");
+  darkModeToggle.checked = true;
+}
+
+darkModeToggle.addEventListener("change", () => {
+  if (darkModeToggle.checked) {
+    document.body.classList.add("dark");
+    localStorage.setItem("theme", "dark");
+  } else {
+    document.body.classList.remove("dark");
+    localStorage.setItem("theme", "light");
+  }
+});
+
+
+// notes
+const notesList = document.getElementById("notes-list");
+const notesTextarea = document.getElementById("notes-textarea");
+const noteTitle = document.getElementById("note-title");
+const newNoteBtn = document.getElementById("new-note-btn");
+
+let notes = JSON.parse(localStorage.getItem("notesData") || "[]");
+let activeNoteId = null;
+
+function saveNotes() {
+  localStorage.setItem("notesData", JSON.stringify(notes));
+}
+
+function renderNotesList() {
+    notesList.innerHTML = "";
+    notes.forEach(note => {
+        const itemContainer = document.createElement("div");
+        itemContainer.className = "note-item" + (note.id === activeNoteId ? " active" : "");
+        itemContainer.addEventListener("click", () => selectNote(note.id));
+
+        const titleSpan = document.createElement("span");
+        titleSpan.className = "note-item-title";
+        titleSpan.textContent = note.title || "Untitled";
+
+        // delete button
+        const deleteBtn = document.createElement("button");
+        deleteBtn.className = "delete-note-btn";
+        deleteBtn.innerHTML = "&times;"; // "x" symbol
+        deleteBtn.title = "Delete Note";
+        deleteBtn.addEventListener("click", (e) => {
+            e.stopPropagation(); 
+            deleteNote(note.id);
+        });
+
+        itemContainer.appendChild(titleSpan);
+        itemContainer.appendChild(deleteBtn);
+        notesList.appendChild(itemContainer);
+    });
+}
+
+
+function selectNote(id) {
+  activeNoteId = id;
+  const note = notes.find(n => n.id === id);
+  if (note) {
+    noteTitle.textContent = note.title || "Untitled";
+    notesTextarea.value = note.content || "";
+  } else if (notes.length > 0) {
+    selectNote(notes[0].id);
+    return;
+  } else {
+    noteTitle.textContent = "Notes";
+    notesTextarea.value = "";
+  }
+  renderNotesList();
+}
+
+function createNewNote() {
+  const id = Date.now();
+  const newNote = { id, title: "Untitled", content: "" };
+  notes.unshift(newNote);
+  saveNotes();
+  selectNote(id);
+}
+
+
+// del
+function deleteNote(idToDelete) {
+    const index = notes.findIndex(note => note.id === idToDelete);
+    if (index === -1) return;
+    notes = notes.filter(note => note.id !== idToDelete);
+    saveNotes();
+
+    // create new if no note
+    if (notes.length === 0) {
+        createNewNote();
+    } else {
+        if (activeNoteId === idToDelete) {
+            const newActiveIndex = Math.min(index, notes.length - 1);
+            selectNote(notes[newActiveIndex].id);
+        } else {
+            renderNotesList();
+        }
+    }
+}
+
+
+// save on typing
+notesTextarea.addEventListener("input", () => {
+    if (activeNoteId === null) return;
+    const note = notes.find(n => n.id === activeNoteId);
+    if (note) {
+        note.content = notesTextarea.value;
+        const firstLine = note.content.split("\n")[0].trim();
+        note.title = firstLine.substring(0, 50) || "Untitled"; // limit title
+        noteTitle.textContent = note.title;
+        saveNotes();
+        renderNotesList();
+    }
+});
+
+newNoteBtn.addEventListener("click", createNewNote);
+
+if (notes.length > 0) {
+  selectNote(notes[0].id);
+} else {
+  createNewNote();
+}
