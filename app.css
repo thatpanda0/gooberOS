@@ -1,18 +1,24 @@
-/* gang I promise I wrote this code I just cleaned it up with AI */
+/* I lowk gave up manually writing this last like 100 lines are mostly AI all before is AI cleanedup */
 
-/* ---------------- GLOBAL ---------------- */
+
+/* ---------------------------------------------------------------------------------------------- */
+/* GLOBAL STYLES */
+/* ---------------------------------------------------------------------------------------------- */
 @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 
 body {
   margin: 0;
   height: 100vh;
   overflow: hidden;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen;
   background: url("Assets/LightBigSur1.jpg") center/cover;
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    Oxygen;
+  color: #000;
+  transition: background-color 0.3s ease, color 0.3s ease, backdrop-filter 0.3s ease;
 }
 
-/* ---------------- WINDOW SYSTEM ---------------- */
+/* ---------------------------------------------------------------------------------------------- */
+/* WINDOW SYSTEM */
+/* ---------------------------------------------------------------------------------------------- */
 .window {
   position: absolute;
   top: 190px;
@@ -24,10 +30,12 @@ body {
   overflow: hidden;
   resize: none;
   display: none;
-  transition: top 0.35s cubic-bezier(0.25, 1.25, 0.5, 1),
-    left 0.35s cubic-bezier(0.25, 1.25, 0.5, 1),
-    width 0.35s cubic-bezier(0.25, 1.25, 0.5, 1),
-    height 0.35s cubic-bezier(0.25, 1.25, 0.5, 1), border-radius 0.25s ease;
+  transition: background-color 0.3s ease, color 0.3s ease,
+              top 0.35s cubic-bezier(0.25, 1.25, 0.5, 1),
+              left 0.35s cubic-bezier(0.25, 1.25, 0.5, 1),
+              width 0.35s cubic-bezier(0.25, 1.25, 0.5, 1),
+              height 0.35s cubic-bezier(0.25, 1.25, 0.5, 1),
+              border-radius 0.25s ease;
 }
 
 .window:not(.focused) .button {
@@ -36,51 +44,21 @@ body {
 
 .titlebar {
   height: 38px;
-  background: #fff;
-  backdrop-filter: blur(50px);
-  -webkit-backdrop-filter: blur(10px);
   display: flex;
   align-items: center;
   padding: 0 12px;
   cursor: default;
   user-select: none;
   z-index: 10;
+  backdrop-filter: blur(50px);
+  -webkit-backdrop-filter: blur(10px);
+  background: #fff;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .titlebar .buttons {
   display: flex;
   gap: 8px;
-}
-
-.iframe-window .titlebar {
-  background: #1e1e1e;
-  color: white;
-}
-
-.iframe-window .titlebar .title,
-.settings-window .titlebar {
-  color: white;
-}
-
-.settings-window .titlebar {
-  background: none;
-}
-
-.button {
-  width: 13px;
-  height: 13px;
-  border-radius: 50%;
-  display: inline-block;
-}
-
-.close {
-  background: #ff5f57;
-}
-.minimize {
-  background: #ffbd2e;
-}
-.maximize {
-  background: #28c840;
 }
 
 .title {
@@ -93,11 +71,11 @@ body {
 
 .content {
   height: calc(100% - 28px);
-  background: #fff;
-  overflow: auto;
-  padding: 0;
   display: flex;
   flex-direction: column;
+  overflow: auto;
+  padding: 0;
+  background: #fff;
 }
 
 .resize-handle {
@@ -115,26 +93,50 @@ body {
   display: none !important;
 }
 
-#office-frame {
+.button {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.close { background: #ff5f57; }
+.minimize { background: #ffbd2e; }
+.maximize { background: #28c840; }
+
+#iframe-frame {
   width: 100%;
   height: calc(100% - 10px);
   border: none;
 }
 
-/* ---------------- CALENDAR ---------------- */
+/* Special Window Variants */
+.iframe-window .titlebar {
+  background: #1e1e1e;
+  color: white;
+}
+
+.iframe-window .titlebar .title,
+.settings-window .titlebar {
+  color: white;
+}
+
+.settings-window .titlebar {
+  background: none;
+}
+
+/* ---------------------------------------------------------------------------------------------- */
+/* CALENDAR */
+/* ---------------------------------------------------------------------------------------------- */
 .calendar {
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.02),
-    rgba(255, 255, 255, 0.01)
-  );
-  border-radius: 10px;
-  padding: 12px;
-  color: var(--text);
-  height: 100%;
-  flex: 1;
   display: flex;
   flex-direction: column;
+  height: 100%;
+  flex: 1;
+  color: var(--text);
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border-radius: 10px;
+  padding: 12px;
 }
 
 .cal-header {
@@ -144,19 +146,16 @@ body {
   margin-bottom: 24px;
 }
 
-.cal-title {
-  font-weight: 700;
-  font-size: 28px;
-}
+.cal-title { font-weight: 700; font-size: 28px; }
 
 .cal-controls button {
   background: var(--glass);
-  border: 0;
+  border: none;
   padding: 6px 8px;
   border-radius: 6px;
   cursor: pointer;
   font-family: "Inter", "Segoe UI";
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
   margin-left: 6px;
 }
 
@@ -164,7 +163,6 @@ body {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   font-size: 0.8rem;
-  color: rgb(0, 0, 0);
   margin-bottom: 6px;
   flex-shrink: 0;
 }
@@ -180,35 +178,32 @@ body {
 }
 
 .day {
-  min-height: unset;
-  padding: 16px;
   display: flex;
   flex-direction: column;
+  padding: 16px;
 }
 
-.day.inactive {
-  opacity: 0.35;
-}
+.day.inactive { opacity: 0.35; }
 
-.day .date {
-  font-weight: 600;
-  margin-bottom: 6px;
-}
+.day .date { font-weight: 600; margin-bottom: 6px; }
 
-/* ---------------- DOCK ---------------- */
+/* ---------------------------------------------------------------------------------------------- */
+/* DOCK */
+/* ---------------------------------------------------------------------------------------------- */
 #dock {
   position: fixed;
   bottom: 10px;
   left: 50%;
   transform: translate(-50%, 0%);
+  display: flex;
+  padding: 0.3rem;
+  border-radius: 1.2rem;
+  z-index: 999;
   background-color: rgba(255, 255, 255, 0.4);
   backdrop-filter: blur(10px);
-  border-radius: 1.2rem;
-  padding: 0.3rem;
-  display: flex;
-  z-index: 999;
-  box-shadow: inset 0 0 0 0.2px rgba(128, 128, 128, 0.2),
-    0 0 0 0.2px rgba(128, 128, 128, 0.2), rgba(0, 0, 0, 0.3) 2px 5px 19px 7px;
+  box-shadow: inset 0 0 0 0.2px rgba(128,128,128,0.2),
+              0 0 0 0.2px rgba(128,128,128,0.2),
+              rgba(0,0,0,0.3) 2px 5px 19px 7px;
   transition: transform 0.2s ease, background-color 0.3s ease, color 0.3s ease, backdrop-filter 0.3s ease;
 }
 
@@ -220,48 +215,73 @@ body {
 }
 
 #dock .dock-item img {
-  width: 48px;
-  height: 48px;
-  border-radius: 8px;
+  width: 52px;
+  height: 52px;
   transition: transform 0.2s ease;
 }
 
-#dock .dock-item img:hover {
-  transform: scale(1.2);
-}
+#dock .dock-item img:hover { transform: scale(1.2); }
 
-#dock.hidden {
-  transform: translate(-50%, 120%);
-}
+#dock.hidden { transform: translate(-50%, 120%); }
+#dock.shown { transform: translate(-50%, 0%); }
 
-#dock.shown {
-  transform: translate(-50%, 0%);
-}
-
-/* ---------------- DATE DISPLAY ---------------- */
+/* ---------------------------------------------------------------------------------------------- */
+/* DATE DISPLAY */
+/* ---------------------------------------------------------------------------------------------- */
 #date-display {
   position: fixed;
   top: 8px;
   right: 8px;
   font-size: 14px;
   font-weight: 600;
-  color: black;
   font-family: "Segoe UI", "Inter", sans-serif;
-  background-color: rgba(255, 255, 255, 0.4);
+  background-color: rgba(255,255,255,0.4);
   padding: 4px 12px;
   border-radius: 36px;
   backdrop-filter: blur(10px);
   z-index: 31415926;
-  box-shadow: inset 0 0 0 0.2px rgba(128, 128, 128, 0.1),
-    0 0 0 0.2px rgba(128, 128, 128, 0.1), rgba(0, 0, 0, 0.1) 2px 5px 19px 7px;
+  box-shadow: inset 0 0 0 0.2px rgba(128,128,128,0.1),
+              0 0 0 0.2px rgba(128,128,128,0.1),
+              rgba(0,0,0,0.1) 2px 5px 19px 7px;
 }
 
-/* ---------------- SETTINGS PANEL ---------------- */
+
+
+
+
+
+
+/* ==========================================
+   GENERAL TRANSITIONS & WINDOW
+   ========================================== */
+body,
+.titlebar,
+.content,
+#date-display,
+.left-panel,
+.right-panel {
+  transition: background-color 0.3s ease, color 0.3s ease,
+              backdrop-filter 0.3s ease;
+}
+
+.window {
+  transition: background-color 0.3s ease, color 0.3s ease,
+              top 0.35s cubic-bezier(0.25, 1.25, 0.5, 1),
+              left 0.35s cubic-bezier(0.25, 1.25, 0.5, 1),
+              width 0.35s cubic-bezier(0.25, 1.25, 0.5, 1),
+              height 0.35s cubic-bezier(0.25, 1.25, 0.5, 1),
+              border-radius 0.25s ease;
+}
+
+/* ==========================================
+   SETTINGS PANEL
+   ========================================== */
 .settings-container {
   display: flex;
   height: 100%;
 }
 
+/* LEFT PANEL */
 .left-panel {
   width: 200px;
   background: rgba(240, 240, 240, 0.75);
@@ -275,7 +295,7 @@ body {
 .window-buttons {
   display: flex;
   gap: 8px;
-  padding: 6px 12px 12px 12px;
+  padding: 6px 12px 12px;
 }
 
 .settings-nav {
@@ -306,6 +326,7 @@ body {
   font-weight: 500;
 }
 
+/* RIGHT PANEL */
 .right-panel {
   flex: 1;
   display: flex;
@@ -329,12 +350,15 @@ body {
   padding: 16px;
 }
 
-/* ---------------- NOTES ---------------- */
+/* ==========================================
+   NOTES PANEL
+   ========================================== */
 .notes-container {
   display: flex;
   height: 100%;
 }
 
+/* Header & Buttons */
 .notes-header {
   padding: 6px 12px;
 }
@@ -354,6 +378,7 @@ body {
   background: rgba(0, 0, 0, 0.1);
 }
 
+/* Notes List */
 .notes-list {
   display: flex;
   flex-direction: column;
@@ -384,12 +409,22 @@ body {
   font-weight: 500;
 }
 
-.note-item-title {
+/* Note Item Inner Elements */
+.note-item-title,
+.note-item-content-wrapper {
   flex-grow: 1;
   overflow: hidden;
   text-overflow: ellipsis;
   margin-right: 8px;
 }
+
+.note-item-title {
+  display: block;
+  padding: 2px 5px;
+  white-space: nowrap;
+}
+
+.note-title-input-sidebar { width: 75%; box-sizing: border-box; background-color: transparent !important; border: none !important; border-radius: 4px; padding: 1px 4px; font-family: inherit; font-size: inherit; font-weight: 500; color: inherit; outline: none; }
 
 .delete-note-btn {
   background: none;
@@ -414,12 +449,20 @@ body {
   color: #f55;
 }
 
+/* Notes Editor */
 .notes-editor {
   flex: 1;
   display: flex;
+  flex-direction: column;
 }
 
-#notes-textarea {
+.notes-editor-container {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+#notes-editor-area {
   flex: 1;
   border: none;
   outline: none;
@@ -429,44 +472,64 @@ body {
   font-family: "Inter", sans-serif;
   background: transparent;
   color: inherit;
+  overflow-y: auto;
 }
 
-body.dark .notes-list .note-item:hover {
-  background: rgba(255, 255, 255, 0.05);
+#notes-editor-area:empty::before {
+  content: 'Start typing...';
+  color: #999;
+  pointer-events: none;
+  display: block;
 }
 
-body.dark .notes-list .note-item.active {
-  background: rgba(255, 255, 255, 0.1);
+#notes-textarea { display: none; }
+
+/* Toolbar */
+.notes-toolbar {
+  padding: 4px 8px;
+  background: rgba(0,0,0,0.02);
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
 }
 
-body.dark .delete-note-btn {
-  color: #777;
-}
-body.dark .delete-note-btn:hover {
-  color: #ff6b6b;
-}
-
-body,
-.titlebar,
-.content,
-#date-display,
-.left-panel,
-.right-panel {
-  transition: background-color 0.3s ease, color 0.3s ease,
-    backdrop-filter 0.3s ease;
+.format-btn {
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 28px;
+  height: 28px;
+  font-size: 14px;
+  color: inherit;
+  font-family: "Inter", sans-serif;
+  transition: background-color 0.2s, border-color 0.2s;
 }
 
-/* separate window animation */
-/* no dock animation ?? */
-.window {
-  transition: background-color 0.3s ease, color 0.3s ease,
-    top 0.35s cubic-bezier(0.25, 1.25, 0.5, 1),
-    left 0.35s cubic-bezier(0.25, 1.25, 0.5, 1),
-    width 0.35s cubic-bezier(0.25, 1.25, 0.5, 1),
-    height 0.35s cubic-bezier(0.25, 1.25, 0.5, 1), border-radius 0.25s ease;
+.format-btn:hover {
+  background: rgba(0,0,0,0.08);
+  border-color: rgba(0,0,0,0.1);
 }
 
-/* toggle */
+.format-select {
+  background: #fff;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  padding: 3px;
+  color: inherit;
+  font-family: inherit;
+}
+
+.format-select option {
+  background-color: #fff;
+  color: #000;
+}
+
+/* ==========================================
+   THEME TOGGLE
+   ========================================== */
 .theme-toggle {
   display: flex;
   align-items: center;
@@ -476,9 +539,7 @@ body,
   cursor: pointer;
 }
 
-.theme-toggle input {
-  display: none;
-}
+.theme-toggle input { display: none; }
 
 .theme-toggle .slider {
   position: relative;
@@ -509,55 +570,43 @@ body,
   transform: translateX(20px);
 }
 
-/* Dark Mode (beta) */
+/* ==========================================
+   DARK MODE
+   ========================================== */
 body.dark {
   background: url("Assets/DarkBigSur1.jpg") center/cover;
   color: #f0f0f0;
 }
 
-body.dark .window {
-  background-color: #000000;
-  color: #f0f0f0;
-}
-
-body.dark .titlebar {
-  background: #171717;
-  color: white;
-}
-
-body.dark .content {
-  background-color: #121212;
-}
-
+body.dark .window { background-color: #000; color: #f0f0f0; }
+body.dark .titlebar { background: #171717; color: white; }
+body.dark .content { background-color: #121212; }
 body.dark .left-panel {
   backdrop-filter: blur(20px);
-  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  border-right: 1px solid rgba(255,255,255,0.1);
 }
-
-body.dark .right-panel {
-  background: #1e1e1e;
-}
-
-body.dark #dock {
-  background-color: rgba(30, 30, 30, 0.8);
-}
-
-body.dark #date-display {
-  background-color: rgba(30, 30, 30, 0.7);
-  color: white;
-}
+body.dark .right-panel { background: #1e1e1e; }
+body.dark #dock { background-color: rgba(30,30,30,0.8); }
+body.dark #date-display { background-color: rgba(30,30,30,0.7); color: white; }
 
 body.dark .settings-nav .nav-item {
   color: white;
 }
+body.dark .settings-nav .nav-item:hover { background: rgba(255,255,255,0.05); }
+body.dark .settings-nav .nav-item.active { background: rgba(255,255,255,0.1); }
 
-body.dark .settings-nav .nav-item:hover {
-  background: rgba(255, 255, 255, 0.05);
-}
+body.dark .notes-list .note-item:hover { background: rgba(255,255,255,0.05); }
+body.dark .notes-list .note-item.active { background: rgba(255,255,255,0.1); }
+body.dark .delete-note-btn { color: #777; }
+body.dark .delete-note-btn:hover { color: #ff6b6b; }
 
-body.dark .settings-nav .nav-item.active {
-  background: rgba(255, 255, 255, 0.1);
-}
+body.dark .notes-toolbar { background: rgba(255,255,255,0.05); border-bottom-color: rgba(255,255,255,0.1); }
+body.dark .format-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.15); }
+body.dark .format-select { border-color: #555; background-color: #1e1e1e; }
+body.dark .format-select option { background-color: #1e1e1e; color: #f0f0f0; }
+body.dark #notes-editor-area:empty::before { color: #777; }
+
+body.dark .note-title-input-sidebar { background-color: rgba(255,255,255,0.15); border-color: #555; }
 
 body.dark .title {
   flex: 1;
@@ -565,4 +614,309 @@ body.dark .title {
   font-size: 16px;
   font-weight: 500;
   color: #fff;
+}
+
+
+/* rah */
+
+.iframe-window .content,
+.iframe-window .content iframe {
+  width: 100%;
+  height: calc(100% - 18px);
+}
+
+/* calc */
+
+.calculator-window {
+  width: 250px; 
+  min-width: 250px;
+  height: 400px;
+  min-height: 400px;
+  flex-direction: column;
+}
+
+.calculator-window .content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  background-color: #333;
+  overflow: hidden;
+  height: calc(100% - 10px);
+  padding-bottom: 98px;
+}
+
+.calc-display {
+  flex: 6;
+  color: white;
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0 10px 10px;
+  overflow: hidden;
+}
+
+.calc-result {
+  font-size: 48px;
+  font-weight: 300;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.bottom-row {
+  flex: 4;
+  display: flex;
+  flex-direction: row; 
+  gap: 10px;
+  padding: 10px;
+}
+
+.calc-buttons-scientific {
+  flex: 1.2; 
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-auto-rows: 1fr;
+  gap: 8px;
+}
+
+.calc-buttons {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(5, 1fr);
+  gap: 10px;
+}
+
+.calc-button {
+  font-family: "Inter", -apple-system, sans-serif;
+  background-color: #505050;
+  color: white;
+  border: none;
+  border-radius: 50px;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+
+.calc-button:active {
+  filter: brightness(1.2);
+}
+
+.calc-button.function {
+  background-color: #d4d4d2;
+  color: #525251;
+}
+
+.calc-button.operator {
+  background-color: #ff9502;
+  font-size: 24px;
+}
+
+.calc-button.zero {
+  grid-column: span 2;
+  border-radius: 34px;
+  justify-content: flex-start;
+  padding-left: 24px;
+}
+
+.calculator-window .titlebar {
+  background: #333;
+  color: white;
+  padding: 0 12px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+}
+
+/* width plspslpsspls */
+
+.calculator-window:not(.wide) .calc-buttons-scientific {
+  display: none;
+}
+
+.calculator-window:not(.wide) .calc-buttons {
+  flex: 1 1 100%;
+}
+
+/* experiments */
+
+.browser-window .titlebar {
+  display: flex;
+  align-items: center;
+  background: linear-gradient(to bottom, #e9e9e9, #e2e2e2);
+  border-bottom: 1px solid #c6c6c6;
+  flex-shrink: 0;
+}
+
+.nav-controls {
+    display: flex;
+    gap: 16px;
+    margin-right: 12px;
+    margin-left: 12px;
+    align-items: center;
+}
+
+.nav-controls svg {
+    width: 20px;
+    height: 20px;
+    color: #555;
+    cursor: pointer;
+}
+
+.nav-controls svg.disabled {
+    color: #bbb;
+    cursor: not-allowed;
+}
+
+
+.url-bar svg {
+    width: 16px;
+    height: 16px;
+    color: #888;
+}
+
+.url-input {
+    width: 100%;
+    border: none;
+    outline: none;
+    background-color: transparent;
+    font-family: inherit;
+    font-size: 14px;
+    color: #333;
+    text-align: center;
+}
+
+.action-buttons {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-left: 12px;
+}
+
+.action-buttons svg {
+    width: 20px;
+    height: 20px;
+    color: #555;
+    cursor: pointer;
+}
+
+.tab {
+    padding: 8px 12px;
+    background-color: #d1d1d1;
+    font-size: 13px;
+    cursor: pointer;
+    position: relative;
+    color: #444;
+    border: 1px solid #c6c6c6;
+    border-right: none;
+    border-bottom: none;
+    flex: 1;
+    display: flex; 
+    align-items: center;
+    justify-content: center; 
+}
+
+.tab:last-child {
+    border-right: 1px solid #c6c6c6;
+}
+
+.tab-title {
+    flex-grow: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: center;
+    margin-right: 8px; 
+}
+
+.close-tab {
+    font-family: "Lucida Console", Monaco, monospace;
+    font-size: 16px;
+    padding: 0 4px;
+    border-radius: 50%;
+    line-height: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
+
+.close-tab:hover {
+    background-color: #bbb;
+}
+
+.tab.active {
+    background-color: #f9f9f9;
+    color: #000;
+    font-weight: 500;
+}
+
+.url-bar {
+    flex: 1; 
+    margin: 0 5%;
+    background-color: #dcdcdc;
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 14px;
+    color: #333;
+    border: 1px solid #c6c6c6;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tab-bar {
+    display: flex;
+    padding: 0;
+    background-color: #e2e2e2;
+    flex-shrink: 0;
+}
+
+.browser-window .titlebar {
+    display: flex;
+    align-items: center;
+    background: linear-gradient(to bottom, #e9e9e9, #e2e2e2);
+    border-bottom: 1px solid #c6c6c6;
+    flex-shrink: 0;
+}
+
+.close-tab:hover {
+    background-color: #bbb;
+}
+
+.tab.active {
+    background-color: #f9f9f9; 
+    color: #000;
+    font-weight: 500;
+}
+
+.content-view {
+    flex-grow: 1;
+    border: none;
+    background-color: #ffffff; 
+}
+
+
+/* wallpaper switcher */
+
+#wallpaper-switcher {
+  display: flex;
+  gap: 10px;
+}
+.wallpaper-thumb {
+  width: 80px;
+  height: 50px;
+  border-radius: 5px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border-color 0.2s;
+}
+.wallpaper-thumb:hover {
+  border-color: #999;
+}
+.wallpaper-thumb.active {
+  border-color: #4cafef;
 }
