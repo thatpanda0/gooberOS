@@ -20,7 +20,7 @@
       <div class="title">Test</div>
     </div>
     <div class="content" id="content">
-      <iframe id="office-frame" src="https://github1s.com/thatpanda0/gooberOS" frameborder="0"></iframe>
+      <iframe id="office-frame" src="https://github1s.com/" frameborder="0"></iframe>
     </div>
   </div>
 
@@ -68,6 +68,21 @@
             <span class="slider"></span>
             Dark Mode (BETA)
           </label>
+
+          <hr style="margin: 20px 0;">
+
+          <h4>Wallpaper</h4>
+          <div id="wallpaper-switcher">
+            <img src="Assets/LightBigSur1.jpg" data-wallpaper="Assets/LightBigSur1.jpg" class="wallpaper-thumb active">
+            <img src="Assets/DarkBigSur1.jpg" data-wallpaper="Assets/DarkBigSur1.jpg" class="wallpaper-thumb">
+            <img src="Assets/Monterey.jpg" data-wallpaper="Assets/Monterey.jpg" class="wallpaper-thumb">
+            <img src="Assets/BigSur.jpg" data-wallpaper="Assets/BigSur.jpg" class="wallpaper-thumb">
+            <img src="Assets/Catalina.jpg" data-wallpaper="Assets/Catalina.jpg" class="wallpaper-thumb">
+            <img src="Assets/Dome.jpg" data-wallpaper="Assets/Dome.jpg" class="wallpaper-thumb">
+            <img src="Assets/Iridescence.jpg" data-wallpaper="Assets/Iridescence.jpg" class="wallpaper-thumb">                                    
+            <img src="ee80167fdc9f0d61a5fa552.png" data-wallpaper="ee80167fdc9f0d61a5fa552.png" class="wallpaper-thumb">
+            <img src="6F4400BE7469EDA7EF06A251701B9FD6A719E839_size4052_w1852_h2495.jpg" data-wallpaper="6F4400BE7469EDA7EF06A251701B9FD6A719E839_size4052_w1852_h2495.jpg" class="wallpaper-thumb">
+          </div>
         </div>
       </div>
     </div>
@@ -89,21 +104,143 @@
         </div>
 
         <nav class="notes-list" id="notes-list">
-          <!-- rah (iykyk) -->
-        </nav>
+          </nav>
       </div>
 
       <div class="right-panel">
         <div class="titlebar">
-          <div class="title" id="note-title">Untitled</div>
+          <div class="title" id="note-title-display">Untitled</div>
         </div>
-        <div class="notes-editor">
-          <textarea id="notes-textarea" placeholder="Start typing..."></textarea>
+        <div class="notes-toolbar">
+            <button id="bold-btn" class="format-btn" title="Bold"><b>B</b></button>
+            <button id="italic-btn" class="format-btn" title="Italic"><i>I</i></button>
+            <button id="underline-btn" class="format-btn" title="Underline"><u>U</u></button>
+            <button id="strikethrough-btn" class="format-btn" title="Strikethrough"><s>S</s></button>
+            <select id="fontsize-select" class="format-select" title="Font Size">
+                <option value="1">Tiny</option>
+                <option value="2">Small</option>
+                <option value="3" selected>Normal</option>
+                <option value="4">Large</option>
+                <option value="5">Huge</option>
+                <option value="6">Massive</option>
+            </select> 
+            <select id="font-select" class="format-select" title="Font">
+                <option value="Inter">Inter</option>
+                <option value="Consolas">Consolas</option>
+                <option value="Arial">Arial</option>
+                <option value="Georgia">Georgia</option>
+            </select>
+        </div>
+        <div class="notes-editor-container">
+          <div id="notes-editor-area" contenteditable="true"></div>
         </div>
       </div>
     </div>
   </div>
 
+  <div class="window calculator-window">
+    <div class="resize-handle"></div>
+    <div class="titlebar">
+      <div class="buttons">
+        <div class="button close"></div>
+        <div class="button minimize"></div>
+        <div class="button maximize"></div>
+      </div>
+      <div class="title"> </div>
+    </div>
+    <div class="content">
+      <div class="calc-display">
+        <div class="calc-result" id="calc-result">0</div>
+      </div>
+      <div class="bottom-row">
+        <div class="calc-buttons-scientific">
+          <button class="calc-button function" data-action="paren-open">(</button>
+          <button class="calc-button function" data-action="paren-close">)</button>
+          <button class="calc-button function" data-action="square">x²</button>
+          <button class="calc-button function" data-action="cube">x³</button>
+          <button class="calc-button function" data-action="power">xʸ</button>
+          <button class="calc-button function" data-action="exp">eˣ</button>
+          <button class="calc-button function" data-action="ten-power">10ˣ</button>
+          <button class="calc-button function" data-action="reciprocal">1/x</button>
+          <button class="calc-button function" data-action="sqrt">√x</button>
+          <button class="calc-button function" data-action="cbrt">∛x</button>
+          <button class="calc-button function" data-action="yroot">ʸ√x</button>
+          <button class="calc-button function" data-action="ln">ln</button>
+          <button class="calc-button function" data-action="log10">log₁₀</button>
+          <button class="calc-button function" data-action="factorial">x!</button>
+          <button class="calc-button function" data-action="sin">sin</button>
+          <button class="calc-button function" data-action="cos">cos</button>
+          <button class="calc-button function" data-action="tan">tan</button>
+          <button class="calc-button function" data-action="const-e">e</button>
+          <button class="calc-button function" data-action="const-pi">π</button>
+          <button class="calc-button function" data-action="sinh">sinh</button>
+          <button class="calc-button function" data-action="cosh">cosh</button>
+          <button class="calc-button function" data-action="tanh">tanh</button>
+          <button class="calc-button function" data-action="toggle-angle">Rad/Deg</button>
+          <button class="calc-button function" data-action="rand">Rand</button>
+          <button class="calc-button function" data-action="mod">mod</button>
+        </div>
+        <div class="calc-buttons">
+          <button class="calc-button function" data-action="clear">AC</button>
+          <button class="calc-button function" data-action="negate">+/-</button>
+          <button class="calc-button function" data-action="percentage">%</button>
+          <button class="calc-button operator" data-action="divide">÷</button>
+          <button class="calc-button">7</button>
+          <button class="calc-button">8</button>
+          <button class="calc-button">9</button>
+          <button class="calc-button operator" data-action="multiply">×</button>
+          <button class="calc-button">4</button>
+          <button class="calc-button">5</button>
+          <button class="calc-button">6</button>
+          <button class="calc-button operator" data-action="subtract">−</button>
+          <button class="calc-button">1</button>
+          <button class="calc-button">2</button>
+          <button class="calc-button">3</button>
+          <button class="calc-button operator" data-action="add">+</button>
+          <button class="calc-button zero">0</button>
+          <button class="calc-button" data-action="decimal">.</button>
+          <button class="calc-button operator" data-action="calculate">=</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="window browser-window" id="browserWindow">
+      <div class="titlebar" id="titleBar">
+          <div class="buttons">
+              <div class="button close"></div>
+              <div class="button minimize"></div>
+              <div class="button maximize"></div>
+          </div>
+          <div class="nav-controls">
+              <svg class="disabled" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+              </svg>
+              <svg class="disabled" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+              </svg>
+          </div>
+          <div class="url-bar">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m0-10.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.75c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.57-.598-3.75h-.152c-3.196 0-6.1-1.249-8.25-3.286Zm0 13.036h.008v.008H12v-.008Z" />
+              </svg>
+              <input type="text" class="url-input" id="urlInput">
+          </div>
+          <div class="action-buttons">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                 <path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186Zm0-12.814a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185Z" />
+              </svg>
+              <svg id="newTabBtn" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+              </svg>
+          </div>
+      </div>
+      <div class="content" id="content">
+          <div class="tab-bar" id="tabBar"></div>
+          <iframe class="content-view" id="contentView" src="https://www.google.com/webhp?igu=1" title="Website Content"></iframe>
+      </div>
+      <div class="resize-handle"></div>
+  </div>
 
   <div id="dock">
     <button class="dock-item" data-window="0">
@@ -117,6 +254,12 @@
     </button>
     <button class="dock-item" data-window="3">
       <img src="Assets/Notes2.png" alt="Notes">
+    </button>
+    <button class="dock-item" data-window="4">
+      <img src="Assets/Calculator.png" alt="Calculator">
+    </button>
+    <button class="dock-item" data-window="5">
+      <img src="Assets/Safari.png" alt="Safari">
     </button>
   </div>
 
