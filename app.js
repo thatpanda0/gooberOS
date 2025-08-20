@@ -1,4 +1,4 @@
-let zCounter = 1; // global focus counter
+let zCounter = 1;
 
 const dock = document.getElementById("dock");
 const windows = document.querySelectorAll(".window");
@@ -181,11 +181,12 @@ document.querySelectorAll(".dock-item").forEach((button) => {
     }
 
     const totalCells = grid.children.length;
-    const trailing = (7 - (totalCells % 7)) % 7;
-    for(let t=1;t<=trailing;t++){
-      const d = document.createElement('div'); d.className='day inactive'; 
-      d.innerHTML=`<div class="date">${t}</div>`; 
-      grid.appendChild(d);
+    const remaining = 42 - totalCells;
+    for (let t = 1; t <= remaining; t++) {
+        const d = document.createElement('div');
+        d.className = 'day inactive';
+        d.innerHTML = `<div class="date">${t}</div>`;
+        grid.appendChild(d);
     }
 
     cal.appendChild(grid);
@@ -247,12 +248,37 @@ darkModeToggle.addEventListener("change", () => {
   }
 });
 
-
 // notes
+
 const notesList = document.getElementById("notes-list");
-const notesTextarea = document.getElementById("notes-textarea");
-const noteTitle = document.getElementById("note-title");
+const notesEditorArea = document.getElementById("notes-editor-area");
+const noteTitleDisplay = document.getElementById("note-title-display");
 const newNoteBtn = document.getElementById("new-note-btn");
+
+const boldBtn = document.getElementById("bold-btn");
+const underlineBtn = document.getElementById("underline-btn");
+const strikethroughBtn = document.getElementById("strikethrough-btn");
+const fontSelect = document.getElementById('font-select');
+const fontsizeSelect = document.getElementById("fontsize-select");
+
+
+let defaultFontFamily = fontSelect.value;
+let defaultFontSize = fontsizeSelect.value;
+
+fontSelect.addEventListener('change', (e) => {
+    defaultFontFamily = e.target.value;
+    document.execCommand('fontName', false, e.target.value);
+    // update the notes editor style
+    notesEditorArea.style.fontFamily = e.target.value;
+});
+
+fontsizeSelect.addEventListener('change', (e) => {
+    defaultFontSize = e.target.value;
+    document.execCommand('fontSize', false, e.target.value);
+    notesEditorArea.style.fontSize = (e.target.value * 4) + "px";
+});
+
+
 
 let notes = JSON.parse(localStorage.getItem("notesData") || "[]");
 let activeNoteId = null;
@@ -263,29 +289,61 @@ function saveNotes() {
 
 function renderNotesList() {
     notesList.innerHTML = "";
+    let activeInput = null;
+
     notes.forEach(note => {
         const itemContainer = document.createElement("div");
         itemContainer.className = "note-item" + (note.id === activeNoteId ? " active" : "");
-        itemContainer.addEventListener("click", () => selectNote(note.id));
+        itemContainer.addEventListener("click", () => {
+            if (note.id !== activeNoteId) {
+               selectNote(note.id);
+            }
+        });
 
-        const titleSpan = document.createElement("span");
-        titleSpan.className = "note-item-title";
-        titleSpan.textContent = note.title || "Untitled";
+        const contentWrapper = document.createElement('div');
+        contentWrapper.className = 'note-item-content-wrapper';
 
-        // delete button
+        if (note.id === activeNoteId) {
+            const titleInput = document.createElement("input");
+            titleInput.type = "text";
+            titleInput.className = "note-title-input-sidebar";
+            titleInput.value = note.title || "Untitled Note";
+
+            titleInput.addEventListener("input", () => {
+                note.title = titleInput.value || "Untitled Note";
+                noteTitleDisplay.textContent = note.title;
+                saveNotes();
+            });
+            
+            titleInput.addEventListener("click", (e) => e.stopPropagation());
+            contentWrapper.appendChild(titleInput);
+            activeInput = titleInput;
+
+        } else {
+            const titleSpan = document.createElement("span");
+            titleSpan.className = "note-item-title";
+            titleSpan.textContent = note.title || "Untitled Note";
+            contentWrapper.appendChild(titleSpan);
+        }
+
         const deleteBtn = document.createElement("button");
         deleteBtn.className = "delete-note-btn";
-        deleteBtn.innerHTML = "&times;"; // "x" symbol
+        deleteBtn.innerHTML = "&times;";
         deleteBtn.title = "Delete Note";
         deleteBtn.addEventListener("click", (e) => {
             e.stopPropagation(); 
             deleteNote(note.id);
         });
 
-        itemContainer.appendChild(titleSpan);
+        itemContainer.appendChild(contentWrapper);
         itemContainer.appendChild(deleteBtn);
         notesList.appendChild(itemContainer);
     });
+
+    if (activeInput) {
+        activeInput.focus();
+        activeInput.setSelectionRange(activeInput.value.length, activeInput.value.length);
+    }
 }
 
 
@@ -293,35 +351,33 @@ function selectNote(id) {
   activeNoteId = id;
   const note = notes.find(n => n.id === id);
   if (note) {
-    noteTitle.textContent = note.title || "Untitled";
-    notesTextarea.value = note.content || "";
+    noteTitleDisplay.textContent = note.title || "Untitled Note";
+    notesEditorArea.innerHTML = note.content || "";
   } else if (notes.length > 0) {
     selectNote(notes[0].id);
     return;
   } else {
-    noteTitle.textContent = "Notes";
-    notesTextarea.value = "";
+    noteTitleDisplay.textContent = "Notes";
+    notesEditorArea.innerHTML = "";
   }
   renderNotesList();
+  notesEditorArea.focus();
 }
 
 function createNewNote() {
   const id = Date.now();
-  const newNote = { id, title: "Untitled", content: "" };
+  const newNote = { id, title: "Untitled Note", content: "" };
   notes.unshift(newNote);
   saveNotes();
   selectNote(id);
 }
 
-
-// del
 function deleteNote(idToDelete) {
     const index = notes.findIndex(note => note.id === idToDelete);
     if (index === -1) return;
     notes = notes.filter(note => note.id !== idToDelete);
     saveNotes();
 
-    // create new if no note
     if (notes.length === 0) {
         createNewNote();
     } else {
@@ -334,20 +390,34 @@ function deleteNote(idToDelete) {
     }
 }
 
-
-// save on typing
-notesTextarea.addEventListener("input", () => {
+notesEditorArea.addEventListener("input", () => {
     if (activeNoteId === null) return;
     const note = notes.find(n => n.id === activeNoteId);
     if (note) {
-        note.content = notesTextarea.value;
-        const firstLine = note.content.split("\n")[0].trim();
-        note.title = firstLine.substring(0, 50) || "Untitled"; // limit title
-        noteTitle.textContent = note.title;
+        note.content = notesEditorArea.innerHTML;
         saveNotes();
-        renderNotesList();
     }
 });
+
+document.getElementById('italic-btn').addEventListener('click', () => {
+  document.execCommand('italic', false, null);
+});
+
+document.getElementById('font-select').addEventListener('change', (e) => {
+    document.execCommand('fontName', false, e.target.value);
+});
+
+document.getElementById('notes-editor-area').addEventListener('keydown', (e) => {
+    if (e.key === 'Tab') {
+        e.preventDefault(); // Prevent focus change
+        document.execCommand('insertHTML', false, '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'); // Insert 8 spaces
+    }
+});
+
+boldBtn.addEventListener("click", () => document.execCommand("bold"));
+underlineBtn.addEventListener("click", () => document.execCommand("underline"));
+strikethroughBtn.addEventListener("click", () => document.execCommand("strikeThrough"));
+fontsizeSelect.addEventListener("change", () => document.execCommand("fontSize", false, fontsizeSelect.value));
 
 newNoteBtn.addEventListener("click", createNewNote);
 
@@ -356,3 +426,442 @@ if (notes.length > 0) {
 } else {
   createNewNote();
 }
+
+// calc
+
+
+
+
+
+// width calc
+
+const calcWindow = document.querySelector(".calculator-window");
+
+function updateCalcLayout() {
+    if (calcWindow.offsetWidth >= 650) {
+        calcWindow.classList.add("wide");
+    } else {
+        calcWindow.classList.remove("wide");
+    }
+}
+
+window.addEventListener("resize", updateCalcLayout);
+updateCalcLayout();
+
+const resizeObserver = new ResizeObserver(() => {
+  updateCalcLayout();
+});
+
+resizeObserver.observe(calcWindow);
+
+// expression
+
+let expression = "";
+let angleMode = "rad";
+const display = document.getElementById("calc-result");
+
+function updateDisplay() {
+    display.textContent = expression || "0";
+}
+
+document.querySelectorAll(".calc-button").forEach(btn => {
+    btn.addEventListener("click", () => {
+        const val = btn.textContent;
+        const action = btn.dataset.action;
+
+        if (!action) {
+            expression += val;
+        } else {
+            handleAction(action);
+        }
+        updateDisplay();
+    });
+});
+
+function handleAction(action) {
+    switch (action) {
+        case "clear":
+            expression = "";
+            break;
+        case "calculate":
+            try {
+                const result = evaluateExpression(expression);
+                const rounded = Math.round(result * 1e9) / 1e9;
+                expression = rounded.toString();
+            } catch {
+                expression = "Error";
+            }
+            break;
+        case "toggle-angle":
+            angleMode = angleMode === "rad" ? "deg" : "rad";
+            updateAngleButton();
+            break;
+        default:
+            insertFunction(action);
+    }
+}
+
+function insertFunction(action) {
+    switch (action) {
+        // Parentheses
+        case "paren-open":
+            expression += "(";
+            break;
+        case "paren-close":
+            expression += ")";
+            break;
+
+            // Powers
+        case "square":
+            expression += "^(2)";
+            break;
+        case "cube":
+            expression += "^(3)";
+            break;
+        case "power":
+            expression += "^(";
+            break;
+        case "exp":
+            expression += "e^(";
+            break;
+        case "ten-power":
+            expression += "10^(";
+            break;
+
+        case "reciprocal":
+            expression += "1/(";
+            break;
+        case "sqrt":
+            expression += "sqrt(";
+            break;
+        case "cbrt":
+            expression += "cbrt(";
+            break;
+        case "yroot":
+            expression += "^(1/";
+            break;
+
+        case "ln":
+            expression += "ln(";
+            break;
+        case "log10":
+            expression += "log10(";
+            break;
+
+        case "factorial":
+            expression += "!";
+            break;
+
+        case "sin":
+            expression += "sin(";
+            break;
+        case "cos":
+            expression += "cos(";
+            break;
+        case "tan":
+            expression += "tan(";
+            break;
+        case "sinh":
+            expression += "sinh(";
+            break;
+        case "cosh":
+            expression += "cosh(";
+            break;
+        case "tanh":
+            expression += "tanh(";
+            break;
+
+        case "const-e":
+            expression += "e";
+            break;
+        case "const-pi":
+            expression += "pi";
+            break;
+
+        case "rand":
+            expression += "rand()";
+            break;
+
+        case "mod":
+            expression += "%";
+            break;
+
+        case "add":
+            expression += "+";
+            break;
+        case "subtract":
+            expression += "-";
+            break;
+        case "multiply":
+            expression += "*";
+            break;
+        case "divide":
+            expression += "/";
+            break;
+
+
+        default:
+            break;
+    }
+}
+
+
+// rad/deg
+
+function factorial(n) {
+    if (n < 0) return NaN;
+    if (n === 0) return 1;
+    let res = 1;
+    for (let i = 1; i <= n; i++) res *= i;
+    return res;
+}
+
+function evaluateExpression(expr) {
+    expr = expr.replace(/\^/g, "**"); 
+    expr = expr.replace(/(\d+)!/g, "factorial($1)"); 
+    expr = expr.replace(/pi/g, "Math.PI");
+    expr = expr.replace(/\be\b/g, "Math.E");
+
+    const scope = {
+        sin: x => Math.sin(angleMode === "deg" ? x * Math.PI / 180 : x),
+        cos: x => Math.cos(angleMode === "deg" ? x * Math.PI / 180 : x),
+        tan: x => Math.tan(angleMode === "deg" ? x * Math.PI / 180 : x),
+        sinh: x => Math.sinh(x),
+        cosh: x => Math.cosh(x),
+        tanh: x => Math.tanh(x),
+        sqrt: Math.sqrt,
+        cbrt: Math.cbrt,
+        ln: Math.log,
+        log10: Math.log10,
+        rand: Math.random,
+        factorial: factorial,
+    };
+
+    return Function(...Object.keys(scope), `return ${expr}`)(...Object.values(scope));
+}
+
+
+
+function updateAngleButton() {
+    const btn = document.querySelector('[data-action="toggle-angle"]');
+    btn.textContent = angleMode === "rad" ? "Rad" : "Deg";
+}
+updateAngleButton();
+
+
+// keyboard
+
+document.addEventListener("keydown", e => {
+    if (/[0-9]/.test(e.key)) {
+        expression += e.key;
+    } else {
+        switch (e.key) {
+            case "+":
+                expression += "+";
+                break;
+            case "-":
+                expression += "-";
+                break;
+            case "*":
+                expression += "*";
+                break;
+            case "/":
+                expression += "/";
+                break;
+            case "(":
+                expression += "(";
+                break;
+            case ")":
+                expression += ")";
+                break;
+            case ".":
+                expression += ".";
+                break;
+            case "Enter":
+                handleAction("calculate");
+                break;
+            case "=":
+                handleAction("calculate");
+                break;
+            case "Backspace":
+                expression = expression.slice(0, -1);
+                break;
+            case "Escape":
+                handleAction("clear");
+                break;
+        }
+    }
+    updateDisplay();
+});
+document.addEventListener('DOMContentLoaded', () => {
+    const tabBar = document.getElementById('tabBar');
+    const urlInput = document.getElementById('urlInput');
+    const contentView = document.getElementById('contentView');
+    const newTabBtn = document.getElementById('newTabBtn');
+
+
+    let tabs = [{
+        id: Date.now(),
+        title: 'GutHib',
+        url: 'https://www.guthib.com', // https://www.google.com/webhp?igu=1,
+        isActive: true,
+    }];
+
+    // core
+    const renderTabs = () => {
+        tabBar.innerHTML = '';
+        const activeTab = tabs.find(tab => tab.isActive);
+
+        tabs.forEach(tab => {
+            const tabElement = document.createElement('div');
+            tabElement.classList.add('tab');
+            tabElement.dataset.tabId = tab.id;
+
+            const titleElement = document.createElement('span');
+            titleElement.classList.add('tab-title');
+            titleElement.textContent = tab.title;
+
+            const closeBtn = document.createElement('span');
+            closeBtn.classList.add('close-tab');
+            closeBtn.innerHTML = '&times;'; // x
+
+            tabElement.appendChild(titleElement);
+            tabElement.appendChild(closeBtn);
+            if (tab.isActive) {
+                tabElement.classList.add('active');
+            }
+            tabBar.appendChild(tabElement);
+        });
+
+        // update
+        if (activeTab) {
+            urlInput.value = activeTab.url === 'about:blank' ? '' : activeTab.url;
+            if (contentView.src !== activeTab.url) {
+                contentView.src = activeTab.url;
+            }
+        } else if (tabs.length === 0) {
+            // notab
+            contentView.src = 'about:blank';
+            urlInput.value = '';
+        }
+    };
+
+    // format
+    const formatUrl = (input) => {
+        try {
+            new URL(input);
+            return input;
+        } catch (_) {
+            if (input.includes('.') && !input.includes(' ')) {
+                return `https://${input}`;
+            }
+            return `https://www.google.com/search?q=${encodeURIComponent(input)}`;
+        }
+    };
+
+    // newtab closetab tabclick
+    const handleNewTab = () => {
+        tabs.forEach(tab => tab.isActive = false);
+        const newTab = {
+            id: Date.now(),
+            title: 'New Tab',
+            url: 'about:blank',
+            isActive: true,
+        };
+        tabs.push(newTab);
+        renderTabs();
+        urlInput.focus();
+    };
+
+
+    const closeTab = (tabIdToClose) => {
+        const tabIndex = tabs.findIndex(t => t.id === tabIdToClose);
+        if (tabIndex === -1) return;
+
+        const wasActive = tabs[tabIndex].isActive;
+        tabs.splice(tabIndex, 1);
+
+        if (tabs.length === 0) {
+            handleNewTab();
+            return;
+        }
+
+        if (wasActive) {
+            const newActiveIndex = Math.max(0, tabIndex - 1);
+            tabs[newActiveIndex].isActive = true;
+        }
+
+        renderTabs();
+    };
+
+    const handleTabBarClick = (e) => {
+        const tabElement = e.target.closest('.tab');
+        if (!tabElement) return;
+
+        const tabId = Number(tabElement.dataset.tabId);
+
+        if (e.target.classList.contains('close-tab')) {
+            closeTab(tabId);
+        } else {
+            tabs.forEach(tab => tab.isActive = (tab.id === tabId));
+            renderTabs();
+        }
+    };
+
+    const handleUrlSubmit = (e) => {
+        e.stopPropagation();
+
+        if (e.key === 'Enter') {
+            const activeTab = tabs.find(tab => tab.isActive);
+            if (activeTab) {
+                const finalUrl = formatUrl(urlInput.value);
+                activeTab.url = finalUrl;
+                try {
+                    let hostname = new URL(finalUrl).hostname.replace('www.', '');
+                    activeTab.title = hostname.split('.')[0];
+                    activeTab.title = activeTab.title.charAt(0).toUpperCase() + activeTab.title.slice(1);
+                } catch {
+                    activeTab.title = 'Search';
+                }
+                renderTabs();
+            }
+        }
+    };
+
+    // yeah
+    newTabBtn.addEventListener('click', handleNewTab);
+    tabBar.addEventListener('click', handleTabBarClick);
+    urlInput.addEventListener('keydown', handleUrlSubmit);
+    renderTabs();
+});
+
+
+
+// wallpaper switcher
+
+document.addEventListener('DOMContentLoaded', () => {
+    const wallpaperThumbs = document.querySelectorAll('.wallpaper-thumb');
+    
+    const savedWallpaper = localStorage.getItem('desktopWallpaper');
+    if (savedWallpaper) {
+        document.body.style.backgroundImage = `url('${savedWallpaper}')`;
+        updateActiveThumb(savedWallpaper);
+    }
+
+    wallpaperThumbs.forEach(thumb => {
+        thumb.addEventListener('click', () => {
+            const wallpaperUrl = thumb.dataset.wallpaper;
+            document.body.style.backgroundImage = `url('${wallpaperUrl}')`;
+            localStorage.setItem('desktopWallpaper', wallpaperUrl);
+            updateActiveThumb(wallpaperUrl);
+        });
+    });
+
+    function updateActiveThumb(url) {
+        wallpaperThumbs.forEach(t => t.classList.remove('active'));
+        const activeThumb = document.querySelector(`.wallpaper-thumb[data-wallpaper="${url}"]`);
+        if (activeThumb) {
+            activeThumb.classList.add('active');
+        }
+    }
+});
