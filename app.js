@@ -410,7 +410,7 @@ document.getElementById('font-select').addEventListener('change', (e) => {
 document.getElementById('notes-editor-area').addEventListener('keydown', (e) => {
     if (e.key === 'Tab') {
         e.preventDefault(); // Prevent focus change
-        document.execCommand('insertHTML', false, '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'); // Insert 8 spaces
+        document.execCommand('insertHTML', false, '&nbsp;&nbsp;&nbsp;&nbsp;'); // Insert 8 spaces
     }
 });
 
@@ -840,28 +840,59 @@ document.addEventListener('DOMContentLoaded', () => {
 // wallpaper switcher
 
 document.addEventListener('DOMContentLoaded', () => {
-    const wallpaperThumbs = document.querySelectorAll('.wallpaper-thumb');
-    
+    const wallpaperSwitcher = document.getElementById('wallpaper-switcher');
+    const wallpaperThumbs = () => document.querySelectorAll('.wallpaper-thumb');
+    const uploadInput = document.getElementById('uploadWallpaper');
+
     const savedWallpaper = localStorage.getItem('desktopWallpaper');
     if (savedWallpaper) {
         document.body.style.backgroundImage = `url('${savedWallpaper}')`;
         updateActiveThumb(savedWallpaper);
     }
 
-    wallpaperThumbs.forEach(thumb => {
-        thumb.addEventListener('click', () => {
-            const wallpaperUrl = thumb.dataset.wallpaper;
-            document.body.style.backgroundImage = `url('${wallpaperUrl}')`;
-            localStorage.setItem('desktopWallpaper', wallpaperUrl);
-            updateActiveThumb(wallpaperUrl);
+    function initThumbClickEvents() {
+        wallpaperThumbs().forEach(thumb => {
+            thumb.addEventListener('click', () => {
+                const wallpaperUrl = thumb.dataset.wallpaper;
+                document.body.style.backgroundImage = `url('${wallpaperUrl}')`;
+                localStorage.setItem('desktopWallpaper', wallpaperUrl);
+                updateActiveThumb(wallpaperUrl);
+            });
         });
-    });
+    }
 
     function updateActiveThumb(url) {
-        wallpaperThumbs.forEach(t => t.classList.remove('active'));
+        wallpaperThumbs().forEach(t => t.classList.remove('active'));
         const activeThumb = document.querySelector(`.wallpaper-thumb[data-wallpaper="${url}"]`);
-        if (activeThumb) {
-            activeThumb.classList.add('active');
-        }
+        if (activeThumb) activeThumb.classList.add('active');
     }
+
+    // Handle uploading new wallpaper
+    uploadInput.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const imgSrc = e.target.result;
+
+            // Create new thumbnail
+            const img = document.createElement('img');
+            img.src = imgSrc;
+            img.dataset.wallpaper = imgSrc;
+            img.className = 'wallpaper-thumb';
+
+            wallpaperSwitcher.appendChild(img);
+            initThumbClickEvents(); // Re-init click events
+
+            // Automatically set uploaded wallpaper
+            document.body.style.backgroundImage = `url('${imgSrc}')`;
+            localStorage.setItem('desktopWallpaper', imgSrc);
+            updateActiveThumb(imgSrc);
+        };
+        reader.readAsDataURL(file);
+    });
+
+    // Initialize existing thumbnails
+    initThumbClickEvents();
 });
