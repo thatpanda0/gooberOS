@@ -73,6 +73,7 @@ windows.forEach((win) => {
   });
 
   closeBtn.addEventListener("click", () => {
+    win.classList.remove("maximized");
     win.style.display = "none";
     updateDockVisibility();
   });
@@ -636,7 +637,6 @@ function evaluateExpression(expr) {
         rand: Math.random,
         factorial: factorial,
     };
-
     return Function(...Object.keys(scope), `return ${expr}`)(...Object.values(scope));
 }
 
@@ -896,3 +896,147 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize existing thumbnails
     initThumbClickEvents();
 });
+
+
+// testing clock app
+// switch timer/stopwatch
+document.querySelectorAll('.clock-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.clock-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+
+    const selectedTab = tab.getAttribute('data-tab');
+    document.getElementById('stopwatch-view').style.display = selectedTab === 'stopwatch' ? 'block' : 'none';
+    document.getElementById('timer-view').style.display = selectedTab === 'timer' ? 'block' : 'none';
+  });
+});
+
+// stopwatch
+
+let swInterval, swStartTime, elapsed = 0;
+const swMins = document.getElementById('sw-mins');
+const swMs = document.getElementById('sw-ms');
+const startBtn = document.getElementById('sw-start');
+const lapBtn = document.getElementById('sw-lap');
+const lapsDiv = document.getElementById('laps');
+
+startBtn.addEventListener('click', () => {
+  if (startBtn.textContent === 'Start' || startBtn.textContent === 'Resume') {
+    swStartTime = Date.now() - elapsed;
+    swInterval = setInterval(updateStopwatch, 10);
+    startBtn.textContent = 'Stop';
+  } else {
+    clearInterval(swInterval);
+    elapsed = Date.now() - swStartTime;
+    startBtn.textContent = 'Resume';
+  }
+});
+
+lapBtn.addEventListener('click', () => {
+  if (elapsed > 0) {
+    const lapTime = swMins.textContent + swMs.textContent;
+    const lapItem = document.createElement('div');
+    lapItem.textContent = lapTime;
+    lapsDiv.appendChild(lapItem);
+  }
+});
+
+function updateStopwatch() {
+  elapsed = Date.now() - swStartTime;
+  const mins = Math.floor(elapsed / 60000);
+  const secs = Math.floor((elapsed % 60000) / 1000);
+  const ms = elapsed % 1000;
+  swMins.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  swMs.textContent = `.${ms.toString().padStart(3, '0')}`;
+}
+
+// timer (beats me)
+const timerList = document.getElementById('timer-list');
+const addTimerBtn = document.getElementById('add-timer');
+
+addTimerBtn.addEventListener('click', () => {
+  const name = document.getElementById('new-timer-name').value || 'Timer';
+  const time = document.getElementById('new-timer-time').value;
+  const [hh, mm, ss] = time.split(':').map(Number);
+  const totalSeconds = hh * 3600 + mm * 60 + ss;
+
+  const timer = {
+    name,
+    remaining: totalSeconds,
+    running: false,
+    interval: null
+  };
+
+  const timerDiv = document.createElement('div');
+  timerDiv.classList.add('timer-item');
+
+  const nameSpan = document.createElement('span');
+  nameSpan.textContent = `${timer.name}: ${formatTime(timer.remaining)}`;
+  timerDiv.appendChild(nameSpan);
+
+  // Start Button
+  const startBtn = document.createElement('button');
+  startBtn.textContent = 'Start';
+  startBtn.className = 'btn-small primary';
+  startBtn.addEventListener('click', () => {
+    if (!timer.running && timer.remaining > 0) {
+      timer.running = true;
+      startBtn.textContent = 'Pause';
+      timer.interval = setInterval(() => {
+        if (timer.remaining > 0) {
+          timer.remaining--;
+          nameSpan.textContent = `${timer.name}: ${formatTime(timer.remaining)}`;
+        } else {
+          clearInterval(timer.interval);
+          nameSpan.textContent = `${timer.name}: Done!`;
+          timer.running = false;
+          startBtn.disabled = true;
+          editBtn.disabled = true;
+          startBtn.textContent = 'Done';
+          timerDiv.style.color = 'red';
+        }
+      }, 1000);
+    } else if (timer.running) {
+      clearInterval(timer.interval);
+      timer.running = false;
+      startBtn.textContent = 'Start';
+    }
+  });
+  timerDiv.appendChild(startBtn);
+
+  // Edit Button
+  const editBtn = document.createElement('button');
+  editBtn.textContent = 'Edit';
+  editBtn.className = 'btn-small secondary';
+  editBtn.addEventListener('click', () => {
+    if (!timer.running) {
+      const newTime = prompt('Enter new time (HH:MM:SS):', formatTime(timer.remaining));
+      if (newTime) {
+        const [newH, newM, newS] = newTime.split(':').map(Number);
+        timer.remaining = newH * 3600 + newM * 60 + newS;
+        nameSpan.textContent = `${timer.name}: ${formatTime(timer.remaining)}`;
+        startBtn.disabled = false;
+      }
+    }
+  });
+  timerDiv.appendChild(editBtn);
+
+  // Delete Button
+  const deleteBtn = document.createElement('button');
+  deleteBtn.textContent = 'Delete';
+  deleteBtn.className = 'btn-small secondary';
+  deleteBtn.addEventListener('click', () => {
+    clearInterval(timer.interval);
+    timerDiv.remove();
+  });
+  timerDiv.appendChild(deleteBtn);
+
+  timerList.appendChild(timerDiv);
+});
+
+function formatTime(seconds) {
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = seconds % 60;
+  return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+}
