@@ -642,7 +642,7 @@ body.dark .title {
 .iframe-window .content,
 .iframe-window .content iframe {
   width: 100%;
-  height: calc(100% - 18px);
+  height: calc(100% - 20px);
 }
 
 /* calc */
@@ -1034,4 +1034,31 @@ body.dark .clock-tab.active {
   font-size: 14px;
   font-family: "Inter", "Segoe UI", sans-serif;
   gap: 80px;
+}
+
+
+
+/* rah */
+
+.mc-window .content,
+.mc-window .content iframe {
+  width: 100%;
+  height: calc(100% - 20px);
+}
+
+#goon-frame {
+  width: 100%;
+  height: calc(100% - 20px);
+  border: none;
+}
+
+/* Special Window Variants */
+.mc-window .titlebar {
+  background: #1e1e1e;
+  color: white;
+}
+
+.mc-window .titlebar .title,
+.mc-window .titlebar {
+  color: white;
 }
