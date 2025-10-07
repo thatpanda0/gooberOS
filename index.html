@@ -270,6 +270,28 @@
     </div>
   </div>
 
+  <div class="window mc-window">
+    <div class="resize-handle"></div>
+    <div class="titlebar">
+      <div class="buttons">
+        <div class="button close"></div>
+        <div class="button minimize"></div>
+        <div class="button maximize"></div>
+      </div>
+      <div class="title">Eaglercraft 1.12 u2</div>
+    </div>
+    <div class="content" id="content">
+        <iframe
+        id="goon-frame"
+        src="mc.html"
+        frameborder="0"
+        tabindex="0"
+        sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-popups"
+        allow="fullscreen; pointer-lock; gamepad; clipboard-read; clipboard-write">
+      </iframe>
+    </div>
+  </div>
+
 
   <div id="dock">
     <button class="dock-item" data-window="0">
@@ -293,9 +315,24 @@
     <button class="dock-item" data-window="6">
       <img src="Assets/Clock.png" alt="Clock">
     </button>
+    <button class="dock-item" data-window="7">
+      <img src="Assets/mc.png" alt="Minecraft">
+    </button>
   </div>
 
+  <script>
+    document.addEventListener("pointerup", () => {
+    mode = null;
+    document.body.style.userSelect = "";
 
+    // Re-focus the iframe if present
+    const frame = document.getElementById("goon-frame");
+    if (frame) {
+      frame.focus();
+      try { frame.contentWindow.focus(); } catch {}
+    }
+  });
+  </script>
   <script src="app.js"></script>
 </body>
 </html>
